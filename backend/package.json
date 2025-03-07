@@ -4,16 +4,22 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run ./index.ts"
+    "dev": "bun run nodemon"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/express": "^5.0.0"
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/google.maps": "^3.58.1",
+    "nodemon": "^3.1.9"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.4.0",
+    "@googlemaps/js-api-loader": "^1.16.8",
+    "@googlemaps/places": "^1.9.1",
     "axios": "^1.8.1",
     "cheerio": "^1.0.0",
     "cors": "^2.8.5",

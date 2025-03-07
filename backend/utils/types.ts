@@ -1,26 +1,15 @@
-export interface GooglePlace  {
-    name: string;
-    business_status: string;
-    location: {
-        lat: number | null;
-        lng: number | null;
-    };
-    phone_number: string;
-    address: string;
-    place_id: string;
-    rating: number | string;
-    total_reviews: number;
-    types: string[];
-    opening_hours: boolean | string;
-    plus_code: string;
-    icon: string;
-    photos: {
-        url: string;
-        attribution: string[];
-    }[];
-    scrapped_website: WebsiteData
+import { protos } from '@googlemaps/places';
+
+export interface NearbyResponseType extends protos.google.maps.places.v1.ISearchNearbyResponse {}
+
+export interface SearchRequestType extends protos.google.maps.places.v1.ISearchTextRequest {}
+
+export interface GooglePlace extends protos.google.maps.places.v1.IPlace {
+    scrapped_website?: WebsiteData
 }
 
+export interface PlaceRequest extends Partial<protos.google.maps.places.v1.ISearchNearbyRequest> {}
+   
 
 export interface SocialMedia {
     facebook?: string;
@@ -37,3 +26,17 @@ export interface WebsiteData {
     website: string;
 }
 
+export interface GetPlacesQuery {
+    city?: string;
+    postal_code?: string;
+    country?:string;
+    max_places?:string;
+    radius?:string;
+    state?:string;
+    county?: string;
+    map_urls?: string[];
+    types?: string[];
+    language?: string;
+    query_search?:string;
+    min_rating?:string;
+}
