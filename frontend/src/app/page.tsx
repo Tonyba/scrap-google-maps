@@ -60,7 +60,7 @@ export default function Home() {
 
   const [extraConfig, setExtraConfig] = useState({
     radius: 1000,
-    max_places: 50
+    max_places: 10
   });
 
   const addNewSearchTerm = () => {
@@ -104,7 +104,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-2xl m-auto h-screen flex flex-col justify-center gap-10 [&_p]:mb-5 [&_label]:mb-2 [&_label]:block">
+    <div className="max-w-2xl py-24 m-auto min-h-screen flex flex-col justify-center gap-10 [&_p]:mb-5 [&_label]:mb-2 [&_label]:block">
 
       <h1 >Scrapping Google Places</h1>
 
@@ -149,7 +149,7 @@ export default function Home() {
 
       <div className="filter-container">
         <label htmlFor="max_results">💯 Number of places to extract (per each search term or URL)</label>
-        <Input type="number" name="max_results" id="max_results" value={extraConfig.max_places} onChange={(e) => setExtraConfig({ ...extraConfig, max_places: parseInt(e.target.value) })} />
+        <Input type="number" name="max_results" id="max_results" max={20} value={extraConfig.max_places} onChange={(e) => setExtraConfig({ ...extraConfig, max_places: parseInt(e.target.value) })} />
       </div>
 
       <div className="filter-container">
@@ -233,6 +233,14 @@ export default function Home() {
                   <Input id="state" type="text" value={geolocation.state} onChange={(e) => onGeoChange('state', e.target.value)} />
 
                 </div>
+
+                <div className="filter-geo">
+                  <label htmlFor="county">US County</label>
+
+                  <Input id="county" type="text" value={geolocation.county} onChange={(e) => onGeoChange('county', e.target.value)} />
+
+                </div>
+
 
                 <div className="filter-geo">
                   <label htmlFor="postal_code">Postal Code</label>

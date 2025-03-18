@@ -20,7 +20,7 @@ const getPlaces = async (
     let found_places: GooglePlace[] = [];
 
 
-    const defaultMaxPlaces = 2;
+    const defaultMaxPlaces = 10;
     const defaultRadius = 1000;
     const defaultLng = 'en-US';
 
@@ -66,8 +66,6 @@ const getPlaces = async (
 
         const geoResponse = await axios.get(geocodeUrl);
 
-
-
         if (
             geoResponse.data.status !== "OK" ||
             !geoResponse.data.results.length
@@ -103,24 +101,19 @@ const getPlaces = async (
                 }
             });
 
-            // const resp = await placesClient.searchNearby(placeRequest, {
-            //     timeout: 300000,
-            //     otherArgs: {
-            //         headers: {
-            //             'X-Goog-FieldMask': SELECTED_FIELDS,
-            //         },
-            //     },
-            // });
-
 
             found_places = [...resp.data.places || []];
 
-        } catch (error) {
-            console.log(error);
+        } catch (error: any) {
+
+            console.error("Error with Google Places API:", error.response?.data || error.message);
+           
             return res.status(400).json({
                 success: false,
-                message: 'Something went wrong with the google api'
+                message: 'Something went wrong with the google api',
+                error
             })
+
         }
 
 

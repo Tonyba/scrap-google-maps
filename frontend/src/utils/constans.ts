@@ -113,8 +113,12 @@ const COUNTRIES = ["Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "An
     , "Turkey", "Turkmenistan", "Turks &amp; Caicos", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "Uruguay", "Uzbekistan", "Venezuela", "Vietnam", "Virgin Islands (US)"
     , "Yemen", "Zambia", "Zimbabwe"];
 
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export {
     MAP_PLACES_TYPES,
-    COUNTRIES
+    COUNTRIES,
+    API_URL
 }
 
