@@ -18,7 +18,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -46,10 +48,8 @@ export default function Home() {
 
   const router = useRouter()
 
-
-
   const [searchTerms, setSearchTerms] = useState<string[]>(['']);
-  const [selectedCats, setSelectedCats] = useState<string[]>([]);
+  const [selectedCats, setSelectedCats] = useState<string[]>(['']);
   const [geolocation, setGeolocation] = useState<IGeolocation>({
     city: '',
     country: '',
@@ -104,7 +104,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-2xl m-auto h-screen flex flex-col justify-center gap-10 [&_p]:mb-5 [&_label]:mb-2 [&_label]:block">
+    <div className="max-w-2xl py-10 px-3 m-auto min-h-screen flex flex-col justify-center gap-10 [&_p]:mb-5 [&_label]:mb-2 [&_label]:block">
 
       <h1 >Scrapping Google Places</h1>
 
@@ -147,10 +147,10 @@ export default function Home() {
 
       </div>
 
-      <div className="filter-container">
+      {/* <div className="filter-container">
         <label htmlFor="max_results">💯 Number of places to extract (per each search term or URL)</label>
         <Input type="number" name="max_results" id="max_results" value={extraConfig.max_places} onChange={(e) => setExtraConfig({ ...extraConfig, max_places: parseInt(e.target.value) })} />
-      </div>
+      </div> */}
 
       <div className="filter-container">
         <label htmlFor="radius">Search Radius (in meters)</label>
@@ -171,15 +171,22 @@ export default function Home() {
               <p>Categories might filter out places that you would like to scrape. To avoid this issue, you must list all categories that you want to scrape, including synonyms, e.g. divorce lawyer, divorce attorney, divorce service, etc. See the detailed description.</p>
 
               <div className="filter-select">
-                <label htmlFor="">🎢 Place categories</label>
-                <MultiSelect
+                <label htmlFor="">🎢 Place category</label>
+                <SearchSelect
+                  options={optsList}
+                  selected={selectedCats[0]}
+                  setSelected={(optSelected) => setSelectedCats([optSelected])}
+                  placeholder="Select Category..."
+                />
+
+                {/* <MultiSelect
                   options={optsList}
                   onValueChange={setSelectedCats}
                   defaultValue={selectedCats}
                   placeholder="Select..."
                   variant="secondary"
                   maxCount={4}
-                />
+                /> */}
               </div>
 
             </AccordionContent>
@@ -231,6 +238,13 @@ export default function Home() {
                   <label htmlFor="state">State</label>
 
                   <Input id="state" type="text" value={geolocation.state} onChange={(e) => onGeoChange('state', e.target.value)} />
+
+                </div>
+
+                <div className="filter-geo">
+                  <label htmlFor="county">US County</label>
+
+                  <Input id="county" type="text" value={geolocation.county} onChange={(e) => onGeoChange('county', e.target.value)} />
 
                 </div>
 

@@ -3,11 +3,12 @@ import { ScrappingRequest, ScrappingResponse } from '@/utils/types';
 
 import axios from 'axios';
 
-async function fetchPlaces(args: ScrappingRequest) {
-    const paremeters_string = parseRequestArgs(args);
-    const resp = await axios.get<ScrappingResponse>(`${process.env.API_URL}/scrap-map${paremeters_string}`);
 
-    return resp.data;
+async function fetchPlaces(args: ScrappingRequest) {
+
+    const paremeters_string = parseRequestArgs(args);
+    return await axios.get<ScrappingResponse>(`${process.env.NEXT_PUBLIC_API_URL}/scrap-map${paremeters_string}`);
+
 }
 
 export {

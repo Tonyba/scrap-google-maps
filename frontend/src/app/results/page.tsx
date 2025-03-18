@@ -1,19 +1,23 @@
 "use client"
 
-import { useRouter } from 'next/router'
+
+import { useSearchParams } from 'next/navigation';
+import { parseRequestFromQuerySearch } from '@/helpers/helper';
+import { usePlaces } from '@/hooks/usePlaces';
+
 
 const Result = () => {
 
-    const router = useRouter()
-    console.log(router.query);
+    const params = useSearchParams();
+    const request_obj = parseRequestFromQuerySearch(params);
 
-    return <div className="h-screen flex justify-center items-center">
-        <div className="w-full max-w-7xl m-auto">
+    const { status, data, error, isFetching } = usePlaces(request_obj)
+
+    if (status == 'pending') return 'LOADING...';
+    if (status == 'error') return error.message;
 
 
-
-        </div>
-    </div>
+    return 'Success';
 }
 
 export default Result;
