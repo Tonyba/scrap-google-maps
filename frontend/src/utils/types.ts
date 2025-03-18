@@ -5,46 +5,57 @@ export interface ScrappingResponse {
 }
 
 export interface FoundPlace {
-    types: string[];
-    formattedAddress: string;
-    rating: number;
-    googleMapsUri: string;
-    websiteUri?: string;
-    businessStatus: BusinessStatus;
-    userRatingCount: number;
-    displayName: DisplayName;
+    business_status: string;
+    geometry: Geometry;
+    icon: string;
+    icon_background_color: string;
+    icon_mask_base_uri: string;
+    name: string;
+    opening_hours: OpeningHours;
     photos: Photo[];
+    place_id: string;
+    plus_code: PlusCode;
+    rating: number;
+    reference: string;
+    scope: string;
+    types: string[];
+    user_ratings_total: number;
+    vicinity: string;
+    website: string;
+    url: string;
+    international_phone_number: string;
     scrapped_website: ScrappedWebsite;
-    internationalPhoneNumber?: string;
-    primaryType?: string;
 }
 
-export enum BusinessStatus {
-    Operational = "OPERATIONAL",
+export interface Geometry {
+    location: Location;
+    viewport: Viewport;
 }
 
-export interface DisplayName {
-    text: string;
-    languageCode: LanguageCode;
+export interface Location {
+    lat: number;
+    lng: number;
 }
 
-export enum LanguageCode {
-    En = "en",
+export interface Viewport {
+    northeast: Location;
+    southwest: Location;
+}
+
+export interface OpeningHours {
+    open_now: boolean;
 }
 
 export interface Photo {
-    name: string;
-    widthPx: number;
-    heightPx: number;
-    authorAttributions: AuthorAttribution[];
-    flagContentUri: string;
-    googleMapsUri: string;
+    height: number;
+    html_attributions: string[];
+    photo_reference: string;
+    width: number;
 }
 
-export interface AuthorAttribution {
-    displayName: string;
-    uri: string;
-    photoUri: string;
+export interface PlusCode {
+    compound_code: string;
+    global_code: string;
 }
 
 export interface ScrappedWebsite {
@@ -54,12 +65,12 @@ export interface ScrappedWebsite {
 }
 
 export interface SocialMedia {
-    facebook?: string[];
-    instagram?: string[];
-    twitter?: string[];
-    linkedin?: string[];
-    youtube?: string[];
-    tiktok?: string[];
+    facebook: string[];
+    instagram: string[];
+    twitter: string[];
+    linkedin: string[];
+    youtube: string[];
+    tiktok: string[];
 }
 
 interface Geolocation {

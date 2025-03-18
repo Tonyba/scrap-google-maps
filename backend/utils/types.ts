@@ -1,15 +1,21 @@
-import { protos } from '@googlemaps/places';
+// import { protos } from '@googlemaps/places';
 
-export interface NearbyResponseType extends protos.google.maps.places.v1.ISearchNearbyResponse {}
+import type { PlaceData } from "@googlemaps/google-maps-services-js";
 
-export interface SearchRequestType extends protos.google.maps.places.v1.ISearchTextRequest {}
+// export interface NearbyResponseType extends protos.google.maps.places.v1.ISearchNearbyResponse { }
 
-export interface GooglePlace extends protos.google.maps.places.v1.IPlace {
-    scrapped_website?: WebsiteData
+// export interface SearchRequestType extends protos.google.maps.places.v1.ISearchTextRequest { }
+
+// export interface NewGooglePlace extends protos.google.maps.places.v1.IPlace {
+//     scrapped_website?: WebsiteData
+// }
+
+export interface GooglePlace extends PlaceData {
+    scrapped_website?: WebsiteData;
 }
 
-export interface PlaceRequest extends Partial<protos.google.maps.places.v1.ISearchNearbyRequest> {}
-   
+// export interface PlaceRequest extends Partial<protos.google.maps.places.v1.ISearchNearbyRequest> { }
+
 
 export interface SocialMedia {
     facebook?: string;
@@ -29,14 +35,14 @@ export interface WebsiteData {
 export interface GetPlacesQuery {
     city?: string;
     postal_code?: string;
-    country?:string;
-    max_places?:string;
-    radius?:string;
-    state?:string;
+    country?: string;
+    max_places?: string;
+    radius?: string;
+    state?: string;
     county?: string;
     map_urls?: string[];
     types?: string[];
     language?: string;
-    query_search?:string;
-    min_rating?:string;
+    query_search?: string;
+    min_rating?: string;
 }

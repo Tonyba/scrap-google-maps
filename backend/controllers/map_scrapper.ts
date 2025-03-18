@@ -1,11 +1,12 @@
 import axios from "axios";
-import type { GetPlacesQuery, GooglePlace, NearbyResponseType, PlaceRequest, SearchRequestType, WebsiteData } from "../utils/types";
+//import type { GetPlacesQuery, GooglePlace, NearbyResponseType, PlaceRequest, SearchRequestType, WebsiteData } from "../utils/types";
+import type { GetPlacesQuery, GooglePlace, WebsiteData } from "../utils/types";
 
 import * as cheerio from 'cheerio';
 import { API_KEY, SELECTED_FIELDS } from "../utils/constants";
 import type { NextFunction, Request, Response } from "express";
-import { placesClient } from "../utils/places_client";
-
+import GoogleMapsClient from "../utils/singleton";
+import type { PlacesNearbyRequest } from "@googlemaps/google-maps-services-js";
 
 
 
@@ -14,23 +15,17 @@ const getPlaces = async (
     res: Response,
     next: NextFunction
 ) => {
+    const client = GoogleMapsClient.getInstance();
 
+    let found_places: Partial<GooglePlace>[] = [];
 
-
-    let found_places: GooglePlace[] = [];
-
-
-    const defaultMaxPlaces = 10;
-    const defaultRadius = 1000;
+    const defaultMaxPlaces = 2;
+    const defaultRadius = 5000;
     const defaultLng = 'en-US';
 
     const maxPlaces = req.query.max_places ? parseInt(req.query.max_places as string) : defaultMaxPlaces;
     const radius = req.query.radius ? parseInt(req.query.radius as string) : defaultRadius;
-
     const type = req.query.types || [];
-
-    const map_urls = req.query.map_urls || [];
-
     const query = req.query.query_search || '';
     const city = req.query.city || "";
     const postalCode = req.query.postal_code || "";
@@ -38,116 +33,93 @@ const getPlaces = async (
     const state = req.query.state || "";
     const county = req.query.county || "";
 
-
-    const addressString = [];
-
-
-    if (query) addressString.push(query);
-    if (county) addressString.push(county);
-    if (city) addressString.push(city);
-    if (state) addressString.push(state);
-    if (postalCode) addressString.push(postalCode);
-    if (country) addressString.push(country);
-
-    let locationQuery: string = addressString.join(",");
-    locationQuery = locationQuery.trim();
+    // Construct the location query
+    const addressString = [query, county, city, state, postalCode, country].filter(Boolean);
+    let locationQuery: string = addressString.join(",").trim();
 
     if (!locationQuery) {
-        return res.status(400).json({
-            success: false,
-            message: "Invalid Location",
-        });
+        return res.status(400).json({ success: false, message: "Invalid Location" });
     }
 
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(locationQuery)}&key=${API_KEY}`;
 
-
     try {
-
         const geoResponse = await axios.get(geocodeUrl);
-
-        if (
-            geoResponse.data.status !== "OK" ||
-            !geoResponse.data.results.length
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid Location",
-            });
+        if (geoResponse.data.status !== "OK" || !geoResponse.data.results.length) {
+            return res.status(400).json({ success: false, message: "Invalid Location" });
         }
 
         const { lat, lng } = geoResponse.data.results[0].geometry.location;
 
-        const placeRequest: PlaceRequest = {
-            includedTypes: type,
-            maxResultCount: maxPlaces,
-            locationRestriction: {
-                circle: {
-                    center: {
-                        latitude: lat,
-                        longitude: lng
-                    },
-                    radius
-                }
-            },
-        }
+        const placeRequest: PlacesNearbyRequest = {
+            params: {
+                location: `${lat},${lng}`,
+                radius,
+                key: API_KEY
+            }
+        };
 
-        try {
+        if (type.length) placeRequest.params.type = type[0];
 
-            const resp = await axios.post<{ places: GooglePlace[] }>('https://places.googleapis.com/v1/places:searchNearby', placeRequest, {
-                headers: {
-                    'X-Goog-Api-Key': API_KEY,
-                    'X-Goog-FieldMask': SELECTED_FIELDS
-                }
-            });
+        let nextPageToken: string | undefined;
+        let currentResults: Partial<GooglePlace>[] = [];
+
+        do {
+            if (nextPageToken) {
+                // Add nextPageToken only after the first request
+                placeRequest.params.pagetoken = nextPageToken;
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Google requires a delay
+            }
+
+            const resp = await client.placesNearby(placeRequest);
+
+            currentResults = resp.data.results || [];
+            found_places.push(...currentResults);
 
 
-            found_places = [...resp.data.places || []];
+            nextPageToken = resp.data.next_page_token; // Get nextPageToken if available
 
-        } catch (error: any) {
 
-            console.error("Error with Google Places API:", error.response?.data || error.message);
-           
-            return res.status(400).json({
-                success: false,
-                message: 'Something went wrong with the google api',
-                error
-            })
-
-        }
-
+        } while (nextPageToken);
 
         for (const found_place of found_places) {
 
+
+            const place_data = await client.placeDetails({
+                params: {
+                    place_id: found_place.place_id!,
+                    key: API_KEY,
+                    fields: ['website', 'url', 'international_phone_number']
+                }
+            })
+
             try {
 
-                if (found_place.websiteUri) {
-                    found_place.scrapped_website = await scrapWebsite(found_place.websiteUri);
+                found_place.website = place_data.data.result.website;
+                found_place.url = place_data.data.result.url;
+                found_place.international_phone_number = place_data.data.result.international_phone_number;
+
+                if (place_data.data.result.website) {
+                    found_place.scrapped_website = await scrapWebsite(place_data.data.result.website);
                 } else {
                     found_place.scrapped_website = {
                         emails: [],
                         socialMedia: {},
                         website: "",
                     };
+
+
                 }
             } catch (error) { }
         }
 
-        res.json({
-            success: true,
-            maxPlaces,
-            found_places
-        });
+        res.json({ success: true, count: found_places.length, found_places });
 
     } catch (error: any) {
-
-        return res.status(400).json({
-            message: error.data.error_message
-        })
+        return res.status(400).json({ message: error.data?.error_message || "An error occurred" });
     }
-
-
 };
+
 
 async function scrapWebsite(website: string): Promise<WebsiteData> {
     try {
