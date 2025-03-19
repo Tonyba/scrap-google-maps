@@ -12,6 +12,7 @@ import type { PlaceData } from "@googlemaps/google-maps-services-js";
 
 export interface GooglePlace extends PlaceData {
     scrapped_website?: WebsiteData;
+    place_photo: string;
 }
 
 // export interface PlaceRequest extends Partial<protos.google.maps.places.v1.ISearchNearbyRequest> { }
@@ -45,4 +46,5 @@ export interface GetPlacesQuery {
     language?: string;
     query_search?: string;
     min_rating?: string;
+    address?: string;
 }

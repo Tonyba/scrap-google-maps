@@ -4,6 +4,8 @@
 import { useSearchParams } from 'next/navigation';
 import { parseRequestFromQuerySearch } from '@/helpers/helper';
 import { usePlaces } from '@/hooks/usePlaces';
+import { PlacesTable } from './data-table';
+import { columns } from './columns';
 
 
 const Result = () => {
@@ -13,11 +15,11 @@ const Result = () => {
 
     const { status, data, error, isFetching } = usePlaces(request_obj)
 
-    if (status == 'pending') return 'LOADING...';
+
     if (status == 'error') return error.message;
 
 
-    return 'Success';
+    return <PlacesTable columns={columns} data={data ? data.data.found_places : []} loading={isFetching} />
 }
 
 export default Result;

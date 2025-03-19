@@ -8,7 +8,7 @@ import axios from 'axios';
 async function fetchPlaces(args: ScrappingRequest) {
 
     const paremeters_string = parseRequestArgs(args);
-    return await axios.get<ScrappingResponse>(`${process.env.NEXT_PUBLIC_API_URL}/scrap-map${paremeters_string}`);
+    return await axios.get<ScrappingResponse>(`${API_URL}/scrap-map${paremeters_string}`);
 
 }
 

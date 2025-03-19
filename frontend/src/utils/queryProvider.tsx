@@ -1,13 +1,13 @@
 "use client";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
+            staleTime: 24 * 60 * 60 * 1000, // 1 day
             refetchOnWindowFocus: false,
-            gcTime: 10 * (60 * 1000) // 10 minutes
+            gcTime: 24 * 60 * 60 * 1000 // 1 day
         }
     }
 });

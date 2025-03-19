@@ -13,6 +13,7 @@ export interface FoundPlace {
     name: string;
     opening_hours: OpeningHours;
     photos: Photo[];
+    place_photo: string;
     place_id: string;
     plus_code: PlusCode;
     rating: number;
@@ -65,12 +66,12 @@ export interface ScrappedWebsite {
 }
 
 export interface SocialMedia {
-    facebook: string[];
-    instagram: string[];
-    twitter: string[];
-    linkedin: string[];
-    youtube: string[];
-    tiktok: string[];
+    facebook?: string[];
+    instagram?: string[];
+    twitter?: string[];
+    linkedin?: string[];
+    youtube?: string[];
+    tiktok?: string[];
 }
 
 interface Geolocation {
@@ -78,7 +79,8 @@ interface Geolocation {
     city: string
     county: string,
     postal_code: string,
-    state: string
+    state: string,
+    address: string
 }
 
 export interface ScrappingRequest {

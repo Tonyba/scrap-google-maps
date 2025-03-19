@@ -55,7 +55,8 @@ export default function Home() {
     country: '',
     county: '',
     postal_code: '',
-    state: ''
+    state: '',
+    address: ''
   });
 
   const [extraConfig, setExtraConfig] = useState({
@@ -146,6 +147,12 @@ export default function Home() {
         </div>
 
       </div>
+
+      <div className="filter-container">
+        <label htmlFor="location">📍 Location (use only one location per run) (optional)</label>
+        <Input type="text" placeholder="e.g., use City + Country" name="location" id="location" value={geolocation.address} onChange={(e) => onGeoChange('address', e.target.value)} />
+      </div>
+
 
       {/* <div className="filter-container">
         <label htmlFor="max_results">💯 Number of places to extract (per each search term or URL)</label>

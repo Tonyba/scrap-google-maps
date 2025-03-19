@@ -39,7 +39,8 @@ function parseRequestFromQuerySearch(params: ReadonlyURLSearchParams): Scrapping
             country: '',
             county: '',
             postal_code: '',
-            state: ''
+            state: '',
+            address: ''
         },
         max_places: 0,
         query_search: '',
